@@ -1,4 +1,4 @@
-function  mot = Adattamento_vers_1412( DBMotori, Load, nTMax) 
+function  mot = Adattamento_zappa( DBMotori, Load, nTMax) 
 %% Function file per la selezione del motore/trasmisione
    
 %% Dati del carico
@@ -136,16 +136,16 @@ disp(['Valore Pcarico_max = ', num2str(Pcarico_max)]);
 disp(['Valore Kcarico_max = ', num2str(Kcarico_max)]);
 
 %% Grafico K-P in scala logaritmica (rms)
-figure('color','white', 'Name','K-P scala logaritmica');
- loglog( [mot.Km], [mot.Pm], 's b', 'linewidth',2); hold on;
- text([mot.Km], [mot.Pm], labels, ...
-         'VerticalAlignment','top','HorizontalAlignment','right')
- loglog(  KcOTT, PcOTT,'D r','linewidth',2); 
-loglog(  Kcarico, Pcarico,'D g','linewidth',2); %plot del punto di carico scelto
- loglog(  Kc, Pc,'--k','linewidth',2);
- legend(  'Motori', 'OTT', 'Pc-Kc' );
- ylim([PcOTT/10,inf]); 
- xlabel('K'); ylabel('P');  grid on
+% figure('color','white', 'Name','K-P scala logaritmica');
+%  loglog( [mot.Km], [mot.Pm], 's b', 'linewidth',2); hold on;
+%  text([mot.Km], [mot.Pm], labels, ...
+%          'VerticalAlignment','top','HorizontalAlignment','right')
+%  loglog(  KcOTT, PcOTT,'D r','linewidth',2); 
+% loglog(  Kcarico, Pcarico,'D g','linewidth',2); %plot del punto di carico scelto
+%  loglog(  Kc, Pc,'--k','linewidth',2);
+%  legend(  'Motori', 'OTT', 'Pc-Kc' );
+%  ylim([PcOTT/10,inf]); 
+%  xlabel('K'); ylabel('P');  grid on
 %% Grafico K-P in scala logaritmica (max)
 figure('color','white', 'Name','K-P (max) scala logaritmica');
  loglog( [mot.Km], [mot.Pm], 's b', 'linewidth',2); hold on;
@@ -160,14 +160,14 @@ loglog(  Kcarico, Pcarico,'D g','linewidth',2); %plot del punto di carico scelto
  ylim([PcOTT/10,inf]); 
  xlabel('K'); ylabel('P');  grid on
 %% Eventulamente fare lo stesso grafico K-P in scala lineare 
-figure('color','white', 'Name','K-P scala lineare');
- plot( [mot.Km], [mot.Pm], 's b', 'linewidth',2); hold on;
- text([mot.Km], [mot.Pm], labels, ...
-         'VerticalAlignment','top','HorizontalAlignment','right')
- plot(  KcOTT, PcOTT,'D r','linewidth',2); 
-plot(  Kcarico, Pcarico,'D g','linewidth',2); %plot del punto di carico scelto
- plot(  Kc, Pc,'--k','linewidth',2);
- legend(  'Motori', 'OTT', 'Pc-Kc' );
- xlim([0,80]); 
- ylim([0,200000]); 
- xlabel('K'); ylabel('P');  grid on
+% figure('color','white', 'Name','K-P scala lineare');
+%  plot( [mot.Km], [mot.Pm], 's b', 'linewidth',2); hold on;
+%  text([mot.Km], [mot.Pm], labels, ...
+%          'VerticalAlignment','top','HorizontalAlignment','right')
+%  plot(  KcOTT, PcOTT,'D r','linewidth',2); 
+% plot(  Kcarico, Pcarico,'D g','linewidth',2); %plot del punto di carico scelto
+%  plot(  Kc, Pc,'--k','linewidth',2);
+%  legend(  'Motori', 'OTT', 'Pc-Kc' );
+%  xlim([0,80]); 
+%  ylim([0,200000]); 
+%  xlabel('K'); ylabel('P');  grid on
