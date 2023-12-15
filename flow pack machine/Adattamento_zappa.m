@@ -3,7 +3,7 @@ function  mot = Adattamento_zappa( DBMotori, Load, nTMax)
    
 %% Dati del carico
 Cu_rms=Load.Cu_rms;     % variabili di servizio
-Cu_max=Load.Cu_max;
+Cu_max=Load.Cu_max;     %ciao
 Lc=Load.Lc;              
 wpc_rms=Load.wpc_rms;
 wpc_max=Load.wpc_max;
