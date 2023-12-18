@@ -16,7 +16,7 @@ Far_rms = Cu_rms; % fattore accelerante
 Far_max = Cu_max; % fattore cinetico
 
 disp(['Valore Far_rms = ', num2str(Far_rms)] );
-disp(['Valore Far_rms = ', num2str(Far_max)] );
+disp(['Valore Far_max = ', num2str(Far_max)] );
 
 %% calcola il valore di Er_max (fattore cinetico del carico)
 Er_max = sqrt(Jr)*wc_max; % fattore cinetico
@@ -44,10 +44,10 @@ for i=1:nm
        % vel massima lato 1, in rpm
  mot(i).nMAX1 = min(mot(i).nMAX,nTMax) ;     
  wMAX1=mot(i).nMAX1*2*pi/60;
- mot(i).Pm  = mot(i).CN^2/mot(i).Jm;     
- mot(i).Km  = mot(i).Jm*wMAX1^2;
- mot(i).Fm  = sqrt(mot(i).Pm);     
- mot(i).Em  = sqrt(mot(i).Km);   
+ mot(i).FaM_n  = mot(i).CN/sqrt(mot(i).Jm);     
+ mot(i).FaM_max  = mot(i).Tmax/sqrt(mot(i).Jm);
+ mot(i).EM_max  = sqrt(mot(i).Jm)*wMAX1;
+
 end    
 
 %struttura mot(i) = struct('Codice','MSS-6', 'CN', 1.83, 'Jm',   0.00040, 'nMAX', 6000);
@@ -60,57 +60,15 @@ disp(Tablemot);
 %%
 labels={mot.Codice};  % Codici motori
 
-figure('color','white', 'Name','Rapporti di riduzione'); 
-plot([mot.IOTT], 'D k', 'MarkerSize',6); hold on;
-plot([mot.Imin], 'X b', 'MarkerSize',10);
-plot([mot.Imax], 'X r', 'MarkerSize',10); 
-legend('$i_{OTT}$','$i_{min}$','$i_{max}$','interpreter','latex');
-xticklabels(labels);
-xlabel('# motori'); ylabel('i'); grid on;
-
-%% Rappresentazione grafica in K-P
-s =  linspace(0.05,10, 100);     % sigma 
-p_s = (s-1./s).^2;  % p(sigma)
-k_s  = 1./s.^2;      % k(sigma)  
-
-% calcola i valori di P e K al variare di sigma
-Pc =  PcOTT+p_s*Cu_rms*wpc_rms;    
-Kc  = KcOTT*k_s; 
-
-%
-%parte nuova introdotta
-Pc_max =  PcOTT_max+p_s*Cu_max*wpc_max;    
-Kc_max  = KcOTT_max*k_s; 
-%
-%
-
-%DA INSERIRE SC (sigma carico=tau/tau_OTT=i_OTT/i) PER CALCOLARE IL PUNTO
-sc=8.3485/7.75; %sigma
-p_sc = (sc-1/sc)^2; 
-k_sc  = 1/sc^2;      
-Pcarico=PcOTT+p_sc*Cu_rms*wpc_rms;  
-Kcarico=KcOTT*k_sc; 
-%
-%parte nuova introdotta
-Pcarico_max=PcOTT_max+p_sc*Cu_max*wpc_max;  
-Kcarico_max=KcOTT_max*k_sc;
-%
-%
-disp(['Valore Pcarico = ', num2str(Pcarico)]);
-disp(['Valore Kcarico = ', num2str(Kcarico)]);
-disp(['Valore Pcarico_max = ', num2str(Pcarico_max)]);
-disp(['Valore Kcarico_max = ', num2str(Kcarico_max)]);
-
 %% Grafico K-P in scala logaritmica (max)
-figure('color','white', 'Name','K-P (max) scala logaritmica');
- loglog( [mot.Km], [mot.Pm], 's b', 'linewidth',2); hold on;
- text([mot.Km], [mot.Pm], labels, ...
-         'VerticalAlignment','top','HorizontalAlignment','right')
- loglog(  KcOTT, PcOTT,'D r','linewidth',2);
- loglog(  KcOTT_max, PcOTT_max,'D b','linewidth',2); 
-loglog(  Kcarico, Pcarico,'D g','linewidth',2); %plot del punto di carico scelto
- loglog(  Kc_max, Pc_max,'--m','linewidth',2);
- loglog(  Kc, Pc,'--k','linewidth',2);
- legend(  'Motori', 'OTT(rms)', 'OTT(max)','PC', 'Pcmax-Kcmax','Pc-Kc' );
- ylim([PcOTT/10,inf]); 
- xlabel('K'); ylabel('P');  grid on
+figure('color','white', 'Name','Fa_m-E_m scala logaritmica');
+ loglog( Em_max, Fam_max, '--r', 'linewidth',2); hold on;
+ loglog( Em_max, Fam_rms, '--k', 'linewidth',2); hold on;
+
+ loglog( [mot.EM_max], [mot.FaM_max], 's r', 'linewidth',2); hold on;
+ loglog( [mot.EM_max], [mot.FaM_n], 's k', 'linewidth',2); hold on;
+ text([mot.EM_max], [mot.FaM_max], labels,'VerticalAlignment','top','HorizontalAlignment','right')
+ text([mot.EM_max], [mot.FaM_n], labels,'VerticalAlignment','top','HorizontalAlignment','right')
+
+ xlabel('E_m'); ylabel('Fa_m');  grid on
+ legend('Fam_max','Fam_rms');

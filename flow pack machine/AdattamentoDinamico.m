@@ -1,4 +1,4 @@
-function  mot = Adattamento_zappa( DBMotori, Load, nTMax) 
+function  mot = AdattamentoDinamico( DBMotori, Load, nTMax) 
 %% Function file per la selezione del motore/trasmisione
    
 %% Dati del carico
@@ -48,7 +48,9 @@ for i=1:nm
  mot(i).Pm  = mot(i).CN^2/mot(i).Jm;     
  mot(i).Km  = mot(i).Jm*wMAX1^2;
  mot(i).Fm  = sqrt(mot(i).Pm);     
- mot(i).Em  = sqrt(mot(i).Km);   
+ mot(i).Em  = sqrt(mot(i).Km);  
+ mot(i).Fm_max  = mot(i).Tmax/sqrt(mot(i).Jm);
+ mot(i).Em_max  = sqrt(mot(i).Jm)*wMAX1;  
 end    
 
 %struttura mot(i) = struct('Codice','MSS-6', 'CN', 1.83, 'Jm',   0.00040, 'nMAX', 6000);
@@ -99,8 +101,8 @@ plot([mot.IOTT], 'D k', 'MarkerSize',6); hold on;
 plot([mot.Imin], 'X b', 'MarkerSize',10);
 plot([mot.Imax], 'X r', 'MarkerSize',10); 
 legend('$i_{OTT}$','$i_{min}$','$i_{max}$','interpreter','latex');
-xticklabels(labels);
 xlabel('# motori'); ylabel('i'); grid on;
+set(gca,'xtick',1:6,'xticklabel',labels);
 
 %% Rappresentazione grafica in K-P
 s =  linspace(0.05,10, 100);     % sigma 
@@ -147,18 +149,35 @@ disp(['Valore Kcarico_max = ', num2str(Kcarico_max)]);
 %  ylim([PcOTT/10,inf]); 
 %  xlabel('K'); ylabel('P');  grid on
 %% Grafico K-P in scala logaritmica (max)
-figure('color','white', 'Name','K-P (max) scala logaritmica');
- loglog( [mot.Km], [mot.Pm], 's b', 'linewidth',2); hold on;
- text([mot.Km], [mot.Pm], labels, ...
+% figure('color','white', 'Name','K-P (max) scala logaritmica');
+%  loglog( [mot.Km], [mot.Pm], 's b', 'linewidth',2); hold on;
+%  text([mot.Km], [mot.Pm], labels, ...
+%          'VerticalAlignment','top','HorizontalAlignment','right')
+%  loglog(  KcOTT, PcOTT,'D r','linewidth',2);
+%  loglog(  KcOTT_max, PcOTT_max,'D b','linewidth',2); 
+% loglog(  Kcarico, Pcarico,'D g','linewidth',2); %plot del punto di carico scelto
+%  loglog(  Kc_max, Pc_max,'--m','linewidth',2);
+%  loglog(  Kc, Pc,'--k','linewidth',2);
+%  legend(  'Motori', 'OTT(rms)', 'OTT(max)','PC', 'Pcmax-Kcmax','Pc-Kc' );
+%  ylim([PcOTT/10,inf]); 
+%  xlabel('K'); ylabel('P');  grid on
+
+ %% Grafico F-E in scala logaritmica (max)
+figure('color','white', 'Name','E-F scala logaritmica');
+ loglog( [mot.Em], [mot.Fm], 's b', 'linewidth',2); hold on;
+ text([mot.Em], [mot.Fm], labels, ...
          'VerticalAlignment','top','HorizontalAlignment','right')
- loglog(  KcOTT, PcOTT,'D r','linewidth',2);
- loglog(  KcOTT_max, PcOTT_max,'D b','linewidth',2); 
-loglog(  Kcarico, Pcarico,'D g','linewidth',2); %plot del punto di carico scelto
- loglog(  Kc_max, Pc_max,'--m','linewidth',2);
- loglog(  Kc, Pc,'--k','linewidth',2);
- legend(  'Motori', 'OTT(rms)', 'OTT(max)','PC', 'Pcmax-Kcmax','Pc-Kc' );
- ylim([PcOTT/10,inf]); 
- xlabel('K'); ylabel('P');  grid on
+
+ loglog( [mot.Em_max], [mot.Fm_max], 's m', 'linewidth',2); hold on;
+ text([mot.Em_max], [mot.Fm_max], labels, ...
+         'VerticalAlignment','top','HorizontalAlignment','right')
+
+
+ loglog(  sqrt(Kc_max), sqrt(Pc_max),'--m','linewidth',2);
+ loglog(  sqrt(Kc), sqrt(Pc),'--b','linewidth',2);
+ legend(  'Motors (rms)', 'Motors (max)', 'Fcmax-Ecmax','Fc-Ec' );
+ ylim([FcOTT/10,inf]); 
+ xlabel('E'); ylabel('F');  grid on
 %% Eventulamente fare lo stesso grafico K-P in scala lineare 
 % figure('color','white', 'Name','K-P scala lineare');
 %  plot( [mot.Km], [mot.Pm], 's b', 'linewidth',2); hold on;
