@@ -9,7 +9,7 @@ wpc_rms=Load.wpc_rms;
 wpc_max=Load.wpc_max;
 wc_max=Load.wc_max;
 %% calcola i valori ottimi di P e K  del carico (max)
-PcOTT_max = 2*(wpc_max*Cu_max+Lc);  %tasso di potenza
+PcOTT_max = 2*(wpc_max*Cu_max);  %tasso di potenza
 KcOTT_max = Cu_max/wpc_max*wc_max^2; %energia cinetica 
 
 %% calcola i valori ottimi di F e E  del carico (max) 
@@ -113,12 +113,9 @@ k_s  = 1./s.^2;      % k(sigma)
 Pc =  PcOTT+p_s*Cu_rms*wpc_rms;    
 Kc  = KcOTT*k_s; 
 
-%
-%parte nuova introdotta
 Pc_max =  PcOTT_max+p_s*Cu_max*wpc_max;    
 Kc_max  = KcOTT_max*k_s; 
-%
-%
+
 
 %DA INSERIRE SC (sigma carico=tau/tau_OTT=i_OTT/i) PER CALCOLARE IL PUNTO
 sc=8.3485/7.75; %sigma
@@ -130,12 +127,6 @@ Kcarico=KcOTT*k_sc;
 %parte nuova introdotta
 Pcarico_max=PcOTT_max+p_sc*Cu_max*wpc_max;  
 Kcarico_max=KcOTT_max*k_sc;
-%
-%
-disp(['Valore Pcarico = ', num2str(Pcarico)]);
-disp(['Valore Kcarico = ', num2str(Kcarico)]);
-disp(['Valore Pcarico_max = ', num2str(Pcarico_max)]);
-disp(['Valore Kcarico_max = ', num2str(Kcarico_max)]);
 
 %% Grafico K-P in scala logaritmica (rms)
 % figure('color','white', 'Name','K-P scala logaritmica');
