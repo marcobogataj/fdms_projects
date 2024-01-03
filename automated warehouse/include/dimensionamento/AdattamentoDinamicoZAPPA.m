@@ -1,30 +1,17 @@
-function  mot = AdattamentoDinamico( DBMotori, Load, nTMax) 
+function  mot = AdattamentoDinamicoZAPPA( DBMotori, Load, nTMax) 
 %% Function file per la selezione del motore/trasmisione
    
 %% Dati del carico
-Cu_rms=Load.Cu_rms;     % variabili di servizio
-Cu_max=Load.Cu_max;     %ciao
+Cu_rms=Load.Cu_rms;     
+Cu_max=Load.Cu_max;
 Lc=Load.Lc;              
 wpc_rms=Load.wpc_rms;
 wpc_max=Load.wpc_max;
 wc_max=Load.wc_max;
-%% calcola i valori ottimi di P e K  del carico (max)
-PcOTT_max = 2*(wpc_max*Cu_max);  %tasso di potenza
-KcOTT_max = Cu_max/wpc_max*wc_max^2; %energia cinetica 
-
-%% calcola i valori ottimi di F e E  del carico (max) 
-FcOTT_max = sqrt(PcOTT_max); % fattore accelerante 
-EcOTT_max = sqrt(KcOTT_max); % fattore cinetico
-
-disp(['Valore FcOTT_max = ', num2str(FcOTT_max)] );
-disp(['Valore EcOTT_max = ', num2str(EcOTT_max)] );
 
 %% calcola i valori ottimi di P e K  del carico (rms)
 PcOTT = 2*(wpc_rms*Cu_rms+Lc);  %tasso di potenza
 KcOTT = Cu_rms/wpc_rms*wc_max^2; %energia cinetica 
-
-disp(['Valore PcOTT = ', num2str(PcOTT)] );
-disp(['Valore KcOTT = ', num2str(KcOTT)] );
 
 %% calcola i valori ottimi di F e E  del carico (rms) 
 FcOTT = sqrt(PcOTT); % fattore accelerante 
@@ -32,6 +19,10 @@ EcOTT = sqrt(KcOTT); % fattore cinetico
 
 disp(['Valore FcOTT = ', num2str(FcOTT)] );
 disp(['Valore EcOTT = ', num2str(EcOTT)] );
+
+%% calcola i valori ottimi di F  del carico (max) 
+PcOTT_max = 4*(wpc_max*Cu_max);  %tasso di potenza
+FcOTT_max = sqrt(PcOTT_max); % fattore accelerante 
 
 %% dati dei motori
 % campi della struttura motore:  Codice,  CN, Jm, nMAX
@@ -46,11 +37,12 @@ for i=1:nm
  mot(i).nMAX1 = min(mot(i).nMAX,nTMax) ;     
  wMAX1=mot(i).nMAX1*2*pi/60;
  mot(i).Pm  = mot(i).CN^2/mot(i).Jm;     
+ mot(i).Pm_max  = mot(i).Tmax^2/mot(i).Jm;   
  mot(i).Km  = mot(i).Jm*wMAX1^2;
- mot(i).Fm  = sqrt(mot(i).Pm);     
+ mot(i).Fm  = sqrt(mot(i).Pm); 
+ mot(i).Fm_max  = sqrt(mot(i).Pm_max); 
  mot(i).Em  = sqrt(mot(i).Km);  
- mot(i).Fm_max  = mot(i).Tmax/sqrt(mot(i).Jm);
- mot(i).Em_max  = sqrt(mot(i).Jm)*wMAX1;  
+
 end    
 
 %struttura mot(i) = struct('Codice','MSS-6', 'CN', 1.83, 'Jm',   0.00040, 'nMAX', 6000);
@@ -108,76 +100,25 @@ set(gca,'xtick',1:6,'xticklabel',labels);
 s =  linspace(0.05,10, 100);     % sigma 
 p_s = (s-1./s).^2;  % p(sigma)
 k_s  = 1./s.^2;      % k(sigma)  
+f_s = 1/4*(s+1./s).^2;
 
 % calcola i valori di P e K al variare di sigma
-Pc =  PcOTT+p_s*Cu_rms*wpc_rms;    
+Pc =  PcOTT+p_s*Cu_rms*wpc_rms;  
+Pc_max = PcOTT_max*f_s;
 Kc  = KcOTT*k_s; 
 
-Pc_max =  PcOTT_max+p_s*Cu_max*wpc_max;    
-Kc_max  = KcOTT_max*k_s; 
-
-
-%DA INSERIRE SC (sigma carico=tau/tau_OTT=i_OTT/i) PER CALCOLARE IL PUNTO
-sc=8.3485/7.75; %sigma
-p_sc = (sc-1/sc)^2; 
-k_sc  = 1/sc^2;      
-Pcarico=PcOTT+p_sc*Cu_rms*wpc_rms;  
-Kcarico=KcOTT*k_sc; 
-%
-%parte nuova introdotta
-Pcarico_max=PcOTT_max+p_sc*Cu_max*wpc_max;  
-Kcarico_max=KcOTT_max*k_sc;
-
-%% Grafico K-P in scala logaritmica (rms)
-% figure('color','white', 'Name','K-P scala logaritmica');
-%  loglog( [mot.Km], [mot.Pm], 's b', 'linewidth',2); hold on;
-%  text([mot.Km], [mot.Pm], labels, ...
-%          'VerticalAlignment','top','HorizontalAlignment','right')
-%  loglog(  KcOTT, PcOTT,'D r','linewidth',2); 
-% loglog(  Kcarico, Pcarico,'D g','linewidth',2); %plot del punto di carico scelto
-%  loglog(  Kc, Pc,'--k','linewidth',2);
-%  legend(  'Motori', 'OTT', 'Pc-Kc' );
-%  ylim([PcOTT/10,inf]); 
-%  xlabel('K'); ylabel('P');  grid on
-%% Grafico K-P in scala logaritmica (max)
-% figure('color','white', 'Name','K-P (max) scala logaritmica');
-%  loglog( [mot.Km], [mot.Pm], 's b', 'linewidth',2); hold on;
-%  text([mot.Km], [mot.Pm], labels, ...
-%          'VerticalAlignment','top','HorizontalAlignment','right')
-%  loglog(  KcOTT, PcOTT,'D r','linewidth',2);
-%  loglog(  KcOTT_max, PcOTT_max,'D b','linewidth',2); 
-% loglog(  Kcarico, Pcarico,'D g','linewidth',2); %plot del punto di carico scelto
-%  loglog(  Kc_max, Pc_max,'--m','linewidth',2);
-%  loglog(  Kc, Pc,'--k','linewidth',2);
-%  legend(  'Motori', 'OTT(rms)', 'OTT(max)','PC', 'Pcmax-Kcmax','Pc-Kc' );
-%  ylim([PcOTT/10,inf]); 
-%  xlabel('K'); ylabel('P');  grid on
-
- %% Grafico F-E in scala logaritmica (max)
+ %% Grafico F-E in scala logaritmica 
 figure('color','white', 'Name','E-F scala logaritmica');
  loglog( [mot.Em], [mot.Fm], 's b', 'linewidth',2); hold on;
  text([mot.Em], [mot.Fm], labels, ...
          'VerticalAlignment','top','HorizontalAlignment','right')
-
- loglog( [mot.Em_max], [mot.Fm_max], 's m', 'linewidth',2); hold on;
- text([mot.Em_max], [mot.Fm_max], labels, ...
+ loglog( [mot.Em], [mot.Fm_max], 's m', 'linewidth',2); hold on;
+ text([mot.Em], [mot.Fm_max], labels, ...
          'VerticalAlignment','top','HorizontalAlignment','right')
 
-
- loglog(  sqrt(Kc_max), sqrt(Pc_max),'--m','linewidth',2);
  loglog(  sqrt(Kc), sqrt(Pc),'--b','linewidth',2);
- legend(  'Motors (rms)', 'Motors (max)', 'Fcmax-Ecmax','Fc-Ec' );
+ loglog(  sqrt(Kc), sqrt(Pc_max),'--m','linewidth',2);
+ 
+ legend(  'Motors (rms)','Motors (max)','Fc - Ec','Fc max - Ec max' );
  ylim([FcOTT/10,inf]); 
  xlabel('E'); ylabel('F');  grid on
-%% Eventulamente fare lo stesso grafico K-P in scala lineare 
-% figure('color','white', 'Name','K-P scala lineare');
-%  plot( [mot.Km], [mot.Pm], 's b', 'linewidth',2); hold on;
-%  text([mot.Km], [mot.Pm], labels, ...
-%          'VerticalAlignment','top','HorizontalAlignment','right')
-%  plot(  KcOTT, PcOTT,'D r','linewidth',2); 
-% plot(  Kcarico, Pcarico,'D g','linewidth',2); %plot del punto di carico scelto
-%  plot(  Kc, Pc,'--k','linewidth',2);
-%  legend(  'Motori', 'OTT', 'Pc-Kc' );
-%  xlim([0,80]); 
-%  ylim([0,200000]); 
-%  xlabel('K'); ylabel('P');  grid on
