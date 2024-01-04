@@ -37,7 +37,7 @@ for i=1:nm
  mot(i).nMAX1 = min(mot(i).nMAX,nTMax) ;     
  wMAX1=mot(i).nMAX1*2*pi/60;
  mot(i).Pm  = mot(i).CN^2/mot(i).Jm;     
- mot(i).Pm_max  = mot(i).Tmax^2/mot(i).Jm;   
+ mot(i).Pm_max  = mot(i).Cm_max^2/mot(i).Jm;   
  mot(i).Km  = mot(i).Jm*wMAX1^2;
  mot(i).Fm  = sqrt(mot(i).Pm); 
  mot(i).Fm_max  = sqrt(mot(i).Pm_max); 
@@ -94,7 +94,7 @@ plot([mot.Imin], 'X b', 'MarkerSize',10);
 plot([mot.Imax], 'X r', 'MarkerSize',10); 
 legend('$i_{OTT}$','$i_{min}$','$i_{max}$','interpreter','latex');
 xlabel('# motori'); ylabel('i'); grid on;
-set(gca,'xtick',1:6,'xticklabel',labels);
+set(gca,'xtick',1:nm,'xticklabel',labels);
 
 %% Rappresentazione grafica in K-P
 s =  linspace(0.05,10, 100);     % sigma 

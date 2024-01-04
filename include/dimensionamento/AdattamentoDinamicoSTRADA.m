@@ -30,7 +30,7 @@ for i=1:nm
  mot(i).nMAX1 = min(mot(i).nMAX,nTMax) ;     
  wMAX1=mot(i).nMAX1*2*pi/60;
  mot(i).Fam_rms  = mot(i).CN/sqrt(mot(i).Jm);     
- mot(i).Fam_max  = mot(i).Tmax/sqrt(mot(i).Jm);     
+ mot(i).Fam_max  = mot(i).Cm_max/sqrt(mot(i).Jm);     
  mot(i).Em_max  = sqrt(mot(i).Jm)*wMAX1;  
 end    
 

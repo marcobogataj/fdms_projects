@@ -1,4 +1,4 @@
-function  mot = AdattamentoDinamico( DBMotori, Load, nTMax) 
+function  mot = AdattamentoDinamico_old( DBMotori, Load, nTMax) 
 %% Function file per la selezione del motore/trasmisione
    
 %% Dati del carico
@@ -51,7 +51,7 @@ for i=1:nm
  mot(i).Pm_rms  = mot(i).CN^2/mot(i).Jm;     
  mot(i).Km_rms  = mot(i).Jm*wMAX1^2;
 
- mot(i).Pm_max  = mot(i).Tmax^2/mot(i).Jm;     
+ mot(i).Pm_max  = mot(i).Cm_max^2/mot(i).Jm;     
  mot(i).Km_max  = mot(i).Jm*wMAX1^2;
 
  mot(i).Fm_rms  = sqrt(mot(i).Pm_rms);     

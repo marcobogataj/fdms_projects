@@ -9,7 +9,7 @@ theta_zero= 30; %[°] working angle
 Cv= 1.5;
 Ca= 4.5;
 
-Tmax=mot.Tmax;
+Cm_max=mot.Cm_max;
 CN=mot.CN;
 Jm=mot.Jm;
 nMAX=min(nTMax,mot.nMAX);
@@ -29,7 +29,7 @@ for n = 1:4 % iterate for number of working heads
         Cm_vmax = 0;
         w_vmax = 0;
 
-        while MC > 1 && Tmax > Cm_vmax && wMAX > w_vmax
+        while MC > 1 && Cm_max > Cm_vmax && wMAX > w_vmax
             P = P + 1; % increase productivity by one [pcs/min]
             v0= (P*L)/60; %line speed [m/s]
             T= L/v0; %cycle time [s]
