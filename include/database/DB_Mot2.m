@@ -1,6 +1,6 @@
 function [motori] = DB_Mot2()
 %data base motori prova
-
+%matte_main
 %% MOTORI BONFIGLIOLI
 motori(1)=struct('Codice','BMD_{102-5.6}','Jm',3.4e-04,'CN',5.6,'Cm_max',2.5*5.6,'nMAX',6000);
 
