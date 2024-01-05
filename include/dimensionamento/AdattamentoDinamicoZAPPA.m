@@ -133,6 +133,6 @@ figure('color','white', 'Name','E-F scala logaritmica');
  text(Ecarico, Fcarico, "\sigma = " + num2str(sc), ...
          'VerticalAlignment','top','HorizontalAlignment','left')
  
- legend(  'Motors (rms)','Motors (max)','Fc - Ec','Fc max - Ec max','PL' );
+ legend(  'Motors (rms)','Motors (max)','Fc - Ec','Fc max - Ec max',"PL i="+num2str(T.i) );
  ylim([FcOTT/10,inf]); 
  xlabel('E'); ylabel('F');  grid on
