@@ -87,6 +87,7 @@ disp(Tablemot);
 
 %%
 labels={mot.Codice};  % Codici motori
+label=mot(m).Codice;
 
 figure('color','white', 'Name','Rapporti di riduzione'); 
 plot([mot.IOTT], 'D k', 'MarkerSize',6); hold on;
@@ -119,15 +120,18 @@ Ecarico = sqrt(Kcarico);
  %% Grafico F-E in scala logaritmica 
 figure('color','white', 'Name','E-F scala logaritmica');
  loglog( [mot.Em], [mot.Fm], 's b', 'linewidth',2); hold on;
- text([mot.Em], [mot.Fm], labels, ...
-         'VerticalAlignment','top','HorizontalAlignment','right')
- loglog( [mot.Em], [mot.Fm_max], 's m', 'linewidth',2); hold on;
- text([mot.Em], [mot.Fm_max], labels, ...
-         'VerticalAlignment','top','HorizontalAlignment','right')
+ loglog( [mot.Em], [mot.Fm_max], 's m', 'linewidth',2); 
 
  loglog(  sqrt(Kc), sqrt(Pc),'--b','linewidth',2);
  loglog(  sqrt(Kc), sqrt(Pc_max),'--m','linewidth',2);
  loglog(  Ecarico, Fcarico,'D g','linewidth',2);
+
+ text(mot(m).Em, mot(m).Fm, label, ...
+         'VerticalAlignment','top','HorizontalAlignment','left')
+ text(mot(m).Em, mot(m).Fm_max, label, ...
+         'VerticalAlignment','top','HorizontalAlignment','left')
+ text(Ecarico, Fcarico, "\sigma = " + num2str(sc), ...
+         'VerticalAlignment','top','HorizontalAlignment','left')
  
  legend(  'Motors (rms)','Motors (max)','Fc - Ec','Fc max - Ec max','PL' );
  ylim([FcOTT/10,inf]); 
