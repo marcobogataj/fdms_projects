@@ -1,4 +1,4 @@
-function  mot = AdattamentoDinamicoZAPPA( DBMotori, Load, nTMax) 
+function  mot = AdattamentoDinamicoZAPPA( DBMotori, Load, nTMax, m, T) 
 %% Function file per la selezione del motore/trasmisione
    
 %% Dati del carico
@@ -106,6 +106,15 @@ f_s = 1/4*(s+1./s).^2;
 Pc =  PcOTT+p_s*Cu_rms*wpc_rms;  
 Pc_max = PcOTT_max*f_s;
 Kc  = KcOTT*k_s; 
+%
+%DA INSERIRE SC (sigma carico=tau/tau_OTT=i_OTT/i) PER CALCOLARE IL PUNTO
+sc= mot(m).IOTT /T.i; %sigma
+p_sc = (sc-1/sc)^2; 
+k_sc  = 1/sc^2;      
+Pcarico=PcOTT+p_sc*Cu_rms*wpc_rms;  
+Kcarico=KcOTT*k_sc; 
+Fcarico = sqrt(Pcarico);
+Ecarico = sqrt(Kcarico);
 
  %% Grafico F-E in scala logaritmica 
 figure('color','white', 'Name','E-F scala logaritmica');
@@ -118,7 +127,8 @@ figure('color','white', 'Name','E-F scala logaritmica');
 
  loglog(  sqrt(Kc), sqrt(Pc),'--b','linewidth',2);
  loglog(  sqrt(Kc), sqrt(Pc_max),'--m','linewidth',2);
+ loglog(  Ecarico, Fcarico,'D g','linewidth',2);
  
- legend(  'Motors (rms)','Motors (max)','Fc - Ec','Fc max - Ec max' );
+ legend(  'Motors (rms)','Motors (max)','Fc - Ec','Fc max - Ec max','PL' );
  ylim([FcOTT/10,inf]); 
  xlabel('E'); ylabel('F');  grid on
