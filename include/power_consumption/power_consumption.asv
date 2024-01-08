@@ -1,4 +1,4 @@
-function [E_tot,ED1,ES1] = power_consumption(Wm,t,plot_title,plot_on)
+function [E_tot,ED1,ES1,ES3] = power_consumption(Wm,t,plot_title,plot_on)
 %POWER_CONSUMPTION: Computes and plots power and energy consumption given
 
 for i=1:length(Wm)

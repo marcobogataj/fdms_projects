@@ -1,0 +1,108 @@
+function [mlc_x,mlc_y,t,mark] = EvalMovement(slot,limits)
+%EVALMOVEMENT 
+    %load data
+    Px = slot.Px;
+    Py = slot.Py;
+
+    vx_max = limits.vx_max;
+    ax_max = limits.ax_max;
+
+    vy_max = limits.vy_max;
+    ay_max = limits.ay_max;
+
+    x_x = (vx_max^2)/(ax_max*Px+(vx_max)^2);
+    t_x = (1/(1-x_x))*(Px/vx_max);
+
+    x_y = (vy_max^2)/(ay_max*Py+(vy_max)^2);
+    t_y = (1/(1-x_y))*(Py/vy_max);
+    
+    if(isnan(t_x) && isnan(t_y))
+        mark = 'black';
+        t = 0;
+
+    elseif(t_x >= t_y || isnan(t_y))
+        mark = 'blue';
+        t = t_x;
+
+        Cv = Py / (ay_max * t^2); 
+        x_y = (1 - sqrt(1 - 4*Cv))/2;
+
+    elseif (t_x < t_y || isnan(t_x))
+        mark = 'red';
+        t = t_y;
+
+        Cv = Px / (ax_max * t^2); 
+        x_x = (1 - sqrt(1 - 4*Cv))/2;
+    end
+    
+
+    %ASSE X
+    mlc_x = CreateLdmComp(3);
+    mlc_x.disp.um = 'm'; %unit of measure
+
+    %first ML
+    mlc_x.vldm{1}.file = 'ConstSym';
+    mlc_x.vldm{1}.par.xv = x_x;
+    mlc_x.vldm{1}.name = 'O-P1';
+    mlc_x.vldm{1}.h = Px; %stroke
+    mlc_x.vldm{1}.ta = t; %drive time [s]
+    
+    %second ML
+    mlc_x.vldm{2}.file = 'Stop';
+    mlc_x.vldm{2}.name = 'unload';
+    mlc_x.vldm{2}.h = 0; %no movement
+    mlc_x.vldm{2}.ta = 10; % drive time [s]
+    
+    %third ML
+    mlc_x.vldm{3}.file = 'ConstSym';
+    mlc_x.vldm{3}.par.xv = x_x;
+    mlc_x.vldm{3}.name = 'P1-0';
+    mlc_x.vldm{3}.h = -Px; 
+    mlc_x.vldm{3}.ta = t; %[s]
+
+    %disp("Legge di moto: movimento orizzontale");
+    mlc_x = EvalLdmComp(mlc_x,1000);
+    %PlotLdmComp(mlc_x);
+
+    % rinomino le variabili in gioco 
+    x = mlc_x.moto.data{1}.v;
+    xp = mlc_x.moto.data{2}.v;
+    xpp = mlc_x.moto.data{3}.v;
+    tx = mlc_x.moto.time;
+
+    %ASSE Y
+    mlc_y = CreateLdmComp(3);
+    mlc_y.disp.um = 'm'; %unit of measure
+
+    %first ML
+    mlc_y.vldm{1}.file = 'ConstSym';
+    mlc_y.vldm{1}.par.xv = x_y;
+    mlc_y.vldm{1}.name = 'O-P1';
+    mlc_y.vldm{1}.h = Py; %stroke
+    mlc_y.vldm{1}.ta = t; %drive time [s]
+    
+    %second ML
+    mlc_y.vldm{2}.file = 'Stop';
+    mlc_y.vldm{2}.name = 'unload';
+    mlc_y.vldm{2}.h = 0; %no movement
+    mlc_y.vldm{2}.ta = 10; % drive time [s]
+    
+    %third ML
+    mlc_y.vldm{3}.file = 'ConstSym';
+    mlc_y.vldm{3}.par.xv = x_y;
+    mlc_y.vldm{3}.name = 'P1-0';
+    mlc_y.vldm{3}.h = -Py; 
+    mlc_y.vldm{3}.ta = t; %[s]
+
+    %disp("Legge di moto: movimento verticale");
+    mlc_y = EvalLdmComp(mlc_y,1000);
+    %PlotLdmComp(mlc_y);
+
+    % rinomino le variabili in gioco 
+    y = mlc_y.moto.data{1}.v;
+    yp = mlc_y.moto.data{2}.v;
+    ypp = mlc_y.moto.data{3}.v;
+    ty = mlc_y.moto.time;
+
+end
+

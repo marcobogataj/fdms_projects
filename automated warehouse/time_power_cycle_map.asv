@@ -1,0 +1,37 @@
+clc; close all;
+set(0, 'defaultAxesTickLabelInterpreter','latex'); 
+set(0, 'defaultlegendInterpreter','latex')
+
+%Stacker crane
+%limits
+limits.vx_max = 0.65;
+limits.ax_max = 0.4;
+
+limits.vy_max = 1;
+limits.ay_max = 0.4;
+
+figure; hold on;
+
+for Px = 0:1:56
+    for Py = 0:1.5:15
+        
+        slot.Px = Px;
+        slot.Py = Py;
+        
+        [x,y,t] = EvalMovement(slot,limits);
+        
+        %plot(x,y,'LineWidth',2)
+        text(slot.Px+0.5,slot.Py+0.9,num2str(round(t,1)),...
+            'VerticalAlignment','top','HorizontalAlignment','center','FontSize', 12)
+    end
+end
+
+%plot setup
+title("Stacker crane movement")
+xlabel('L [m]')
+ylabel('H [m]')
+grid on;
+xlim([0,45])
+ylim([0,15])
+set(gca,'xtick',0:1:45)
+set(gca,'ytick',0:1.5:15)
