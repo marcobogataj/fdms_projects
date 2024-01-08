@@ -41,13 +41,13 @@ if (plot_on == 1)
     
     
     % ENERGIA RETROGRADA immagazzinabile 
-    disp(['Energia immagazzinabile dal motore ES1 = ', num2str(ES1/1000),'  KJ'] );
+    disp(['Energia immagazzinabile dal motore ES1 = ', num2str(ES1/3600),'  Wh'] );
     
     % ENERGIA DIRETTA fornita dal motore
-    disp(['Energia fornita dal motore ED1 = ', num2str(ED1/1000),'  KJ'] );
+    disp(['Energia fornita dal motore ED1 = ', num2str(ED1/3600),'  Wh'] );
     
     %Bilancio ENERGIA
-    disp(['Energia netta dal motore E_tot = ', num2str(E_tot/1000),'  KJ'] );
+    disp(['Energia netta dal motore E_tot = ', num2str(E_tot/3600),'  Wh'] );
 end
 
 end
