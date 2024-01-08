@@ -33,7 +33,7 @@ function [Wm] = EvalPowerVertical(mlc_y,t)
    
     % Coppia e Potenza carico
     for k=1:length(t)
-        if (t(k)<ty) %fase di carico
+        if(ty(k)<t_12v || ty(k)>2*t_12v+10)
     
         N = 1/ld*(Pcv*lc+P*(la/2+lb));
         Fsm=2*N*fv*sign(wc(k));
@@ -44,7 +44,7 @@ function [Wm] = EvalPowerVertical(mlc_y,t)
         Ci(k)=Rt*(Fsm_i); %inerzia
     
         end
-        if (t(k)>ty) %fase di scarico
+        if (ty(k)>t_12v)&&(ty(k)<2*t_12v+10)
         
         N = 1/ld*(Pcv*lc);
         Fsm=2*N*fv*sign(wc(k));
@@ -62,7 +62,7 @@ function [Wm] = EvalPowerVertical(mlc_y,t)
     %DATI TRASMISSIONE
     T.Codice='ESP 180/2';
     T.eta=1;%caso ideale
-    T.i=70;%rapporto di riduzione
+    % T.i=70;%rapporto di riduzione
     T.JT=1.2e-4; %momento inerzia kgm^2 lato motore
     T.M2=900; %Nm coppia massima all'uscita
     

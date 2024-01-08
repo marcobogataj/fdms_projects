@@ -10,22 +10,22 @@ function [Wm] = EvalPowerHorizontal(mlc_x,t)
 
     %load ldm
     %x = mlc.moto.data{1}.v;
-    xp = mlc_x.moto.data{2}.v;
-    xpp = mlc_x.moto.data{3}.v;
-    tx = mlc_x.moto.time;
+    xp = mlc.moto.data{2}.v;
+    xpp = mlc.moto.data{3}.v;
+    tx = mlc.moto.time;
 
     %compute power
     wc=xp/Ro; %rad/s
     wpc=xpp/Ro; %rad/s^2
     
     for k=1:length(t)
-        if(t(k)<tx) %fase di CARICO
+        if(t(k)<tx) %fase di carico
         
         Ca(k)=(P+Pco)*fv*Ro*sign(wc(k));
         Ci(k)=wpc(k)*(((P+Pco)/g)*Ro^2);
     
         end
-        if (t(k)>tx) %fase di SCARICO
+        if (t(k)>tx) %fase di scarico
         
         Ca(k)=(Pco)*fv*Ro*sign(wc(k));
         Ci(k)=wpc(k)*(((Pco)/g)*Ro^2);
