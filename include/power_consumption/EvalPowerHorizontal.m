@@ -1,4 +1,4 @@
-function [Wm] = EvalPowerHorizontal(mlc_x,t)
+function [Wm,Cm] = EvalPowerHorizontal(mlc_x,t)
 %EVALPOWER
     %load data
     Do= 0.32; %[m] diametro della ruota
@@ -7,6 +7,10 @@ function [Wm] = EvalPowerHorizontal(mlc_x,t)
     Pco= 8000; %[N] peso carrello orizzontale vuoto  
     P= 8000; %[N] peso massimo trasportabile
     g= 9.81;
+    
+    m=4;
+    [mot]=DB_Mot2;
+    Jm=mot(m).Jm;
 
     %load ldm
     %x = mlc.moto.data{1}.v;
@@ -18,19 +22,19 @@ function [Wm] = EvalPowerHorizontal(mlc_x,t)
     wc=xp/Ro; %rad/s
     wpc=xpp/Ro; %rad/s^2
     
-    for k=1:length(t)
-        if(t(k)<tx) %fase di CARICO
-        
-        Ca(k)=(P+Pco)*fv*Ro*sign(wc(k));
-        Ci(k)=wpc(k)*(((P+Pco)/g)*Ro^2);
+    for k=1:length(tx)
+        if(tx(k)<t)
+            Ca(k)=(P+Pco)*fv*Ro*sign(wc(k));
+            Ci(k)=wpc(k)*(((P+Pco)/g)*Ro^2);
     
+        elseif (tx(k)>t+10)
+            Ca(k)=(Pco)*fv*Ro*sign(wc(k));
+            Ci(k)=wpc(k)*(((Pco)/g)*Ro^2);
+    
+        else
+            Ca(k)=0;
+            Ci(k)=0;
         end
-        if (t(k)>tx) %fase di SCARICO
-        
-        Ca(k)=(Pco)*fv*Ro*sign(wc(k));
-        Ci(k)=wpc(k)*(((Pco)/g)*Ro^2);
-        end
-       
     end
 
     Cu=Ca+Ci;
@@ -44,7 +48,6 @@ function [Wm] = EvalPowerHorizontal(mlc_x,t)
     
     Cm=(Cu/(T.eta*T.i))+wpc*T.i*(Jm+T.JT); %coppia motore di verifica
     Wm=Cm.*wc*T.i;%Potenza motore di verifica
-        
 
 end
 

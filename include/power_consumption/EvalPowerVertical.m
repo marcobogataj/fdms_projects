@@ -1,4 +1,4 @@
-function [Wm] = EvalPowerVertical(mlc_y,t)
+function [Wm,Cm] = EvalPowerVertical(mlc_y,t)
 %EVALPOWER
     
 %   y = mlc.moto.data{1}.v;
@@ -15,6 +15,7 @@ function [Wm] = EvalPowerVertical(mlc_y,t)
     Rv= Dv/2;% raggio delle ruote
     fv= 0.009; %coefficiente attrito volvente
     Pcv= 3000; %[N] peso carrello vuoto
+
     if mode==0
         Pct= 7000;
     else
@@ -26,34 +27,40 @@ function [Wm] = EvalPowerVertical(mlc_y,t)
     lb = 0.75;
     lc = 0.05;
     ld = 0.5;
+
+    m=11;
+    [mot]=feval(@DB_Mot3);
+    Jm=mot(m).Jm;
     
     
     wc=yp/Rt; %rad/s
     wpc=ypp/Rt; %rad/s^2
    
     % Coppia e Potenza carico
-    for k=1:length(t)
-        if (t(k)<ty) %fase di carico
+    for k=1:length(ty)
+        if (ty(k)<t) %fase di carico
     
-        N = 1/ld*(Pcv*lc+P*(la/2+lb));
-        Fsm=2*N*fv*sign(wc(k));
-        Cr(k)=Rt*(P+Pcv+Fsm-Pct); %carico
-    
-        N_i=1/ld*(Pcv*lc+P*(la/2+lb))*Rt/g*wpc(k);
-        Fsm_i=2*N_i*fv*sign(wc(k))+(P+Pcv)/g*Rt*wpc(k);
-        Ci(k)=Rt*(Fsm_i); %inerzia
-    
-        end
-        if (t(k)>ty) %fase di scarico
+            N = 1/ld*(Pcv*lc+P*(la/2+lb));
+            Fsm=2*N*fv*sign(wc(k));
+            Cr(k)=Rt*(P+Pcv+Fsm-Pct); %carico
         
-        N = 1/ld*(Pcv*lc);
-        Fsm=2*N*fv*sign(wc(k));
-        Cr(k)=Rt*(Pcv+Fsm-Pct); %carico
+            N_i=1/ld*(Pcv*lc+P*(la/2+lb))*Rt/g*wpc(k);
+            Fsm_i=2*N_i*fv*sign(wc(k))+(P+Pcv)/g*Rt*wpc(k);
+            Ci(k)=Rt*(Fsm_i); %inerzia
     
-        N_i=1/ld*(Pcv*lc)*Rt/g*wpc(k);
-        Fsm_i=2*N_i*fv*sign(wc(k))+Pcv/g*Rt*wpc(k);
-        Ci(k)=Rt*(Fsm_i); %inerzia
-    
+        elseif (ty(k)>t+10) %fase di scarico
+        
+            N = 1/ld*(Pcv*lc);
+            Fsm=2*N*fv*sign(wc(k));
+            Cr(k)=Rt*(Pcv+Fsm-Pct); %carico
+        
+            N_i=1/ld*(Pcv*lc)*Rt/g*wpc(k);
+            Fsm_i=2*N_i*fv*sign(wc(k))+Pcv/g*Rt*wpc(k);
+            Ci(k)=Rt*(Fsm_i); %inerzia
+
+        else
+            Cr(k)=0;
+            Ci(k)=0;
         end
     end
     
@@ -70,6 +77,5 @@ function [Wm] = EvalPowerVertical(mlc_y,t)
     Cm=(Cu/(T.eta*T.i))+wpc*T.i*(Jm+T.JT); %coppia motore di verifica
     Wm=Cm.*wc*T.i;
     
-
 end
 
